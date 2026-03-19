@@ -269,21 +269,26 @@ class TextFontChecker(BaseChecker):
             # 检查段落中的字体
             for run in para.get('runs', []):
                 font = run.get('font', '')
+                size = run.get('size', 12)
                 if font and font != expected_font:
                     incorrect_fonts.append({
                         'page': page,
                         'paragraph': i + 1,
                         'font': font,
+                        'size': size,
                         'text': run.get('text', '')[:20]
                     })
         
         if incorrect_fonts:
             first_error = incorrect_fonts[0]
             
+            # 显示期望值和实际值
             issues.append(self.create_issue(
                 position=f"第{first_error['page']}页 第{first_error['paragraph']}段",
-                description=f"发现{len(incorrect_fonts)}处字体不符合要求（如：{first_error['font']}应为{expected_font}小四号）",
-                suggestion=f"请将正文字体统一设置为{expected_font}，字号为小四号（{expected_size}pt）"
+                description=f"发现{len(incorrect_fonts)}处字体不符合要求",
+                suggestion=f"请将正文字体统一设置为{expected_font}，字号为小四号（{expected_size}pt）",
+                expected_value=f"{expected_font} {expected_size}pt",
+                actual_value=f"{first_error['font']} {first_error.get('size', '?')}pt"
             ))
         
         passed = len(issues) == 0
@@ -352,24 +357,25 @@ class UnitLegalChecker(BaseChecker):
             for wrong, correct in incorrect_units.items():
                 # 使用正则表达式查找独立单位
                 pattern = rf'\b{wrong}\b'
-                if re.search(pattern, text):
+                matches = list(re.finditer(pattern, text))
+                for match in matches:
                     found_errors.append({
                         'page': page,
                         'paragraph': i + 1,
                         'wrong': wrong,
                         'correct': correct,
-                        'context': text[:50]
+                        'context': text[max(0, match.start()-20):match.end()+20]
                     })
         
-        if found_errors:
-            # 按页码分组
-            pages = list(set([e['page'] for e in found_errors]))
-            first_error = found_errors[0]
-            
+        # 关键改进：为每个错误创建独立的issue
+        # 这样如果有5个错误，就会显示5个问题，而不是1个问题
+        for error in found_errors:
             issues.append(self.create_issue(
-                position=f"第{first_error['page']}页 第{first_error['paragraph']}段",
-                description=f"发现{len(found_errors)}处计量单位格式错误（如：{first_error['wrong']}应为{first_error['correct']}）",
-                suggestion="请使用正确的计量单位格式，注意字母的大小写（如：kg、km、kW、dB等）"
+                position=f"第{error['page']}页 第{error['paragraph']}段",
+                description=f"计量单位格式错误：{error['wrong']} 应为 {error['correct']}",
+                suggestion=f"请使用正确的计量单位格式：{error['correct']}",
+                expected_value=error['correct'],
+                actual_value=error['wrong']
             ))
         
         passed = len(issues) == 0
@@ -395,30 +401,35 @@ class MathSymbolChecker(BaseChecker):
             
             # 检查禁止使用的符号
             if '•' in text:
-                found_errors.append({
-                    'page': page,
-                    'paragraph': i + 1,
-                    'wrong': '•',
-                    'correct': '×',
-                    'context': text[:50]
-                })
+                matches = list(re.finditer(r'•', text))
+                for match in matches:
+                    found_errors.append({
+                        'page': page,
+                        'paragraph': i + 1,
+                        'wrong': '•',
+                        'correct': '×',
+                        'context': text[max(0, match.start()-10):match.end()+10]
+                    })
             
             if 'tg' in text.lower():
-                found_errors.append({
-                    'page': page,
-                    'paragraph': i + 1,
-                    'wrong': 'tg',
-                    'correct': 'tan',
-                    'context': text[:50]
-                })
+                matches = list(re.finditer(r'tg', text, re.IGNORECASE))
+                for match in matches:
+                    found_errors.append({
+                        'page': page,
+                        'paragraph': i + 1,
+                        'wrong': 'tg',
+                        'correct': 'tan',
+                        'context': text[max(0, match.start()-10):match.end()+10]
+                    })
         
-        if found_errors:
-            first_error = found_errors[0]
-            
+        # 为每个错误创建独立的issue
+        for error in found_errors:
             issues.append(self.create_issue(
-                position=f"第{first_error['page']}页 第{first_error['paragraph']}段",
-                description=f"发现{len(found_errors)}处数学符号错误（如：{first_error['wrong']}应为{first_error['correct']}）",
-                suggestion="请使用规范的数学符号（使用乘号'×'而不用圆点'•'，使用'tan'而不用'tg'）"
+                position=f"第{error['page']}页 第{error['paragraph']}段",
+                description=f"数学符号错误：{error['wrong']} 应为 {error['correct']}",
+                suggestion=f"请使用规范的数学符号：{error['correct']}",
+                expected_value=error['correct'],
+                actual_value=error['wrong']
             ))
         
         passed = len(issues) == 0
@@ -823,28 +834,31 @@ class FigureCaptionChecker(BaseChecker):
                     'index': i
                 })
         
+        # 当文档中无图时，返回"不适用"状态
+        if not figure_captions:
+            return self.create_not_applicable_result("文档中未发现图标题")
+        
         # 检查图标题格式
-        if figure_captions:
-            # 检查是否按顺序编号
-            numbers = []
-            for caption in figure_captions:
-                match = re.search(r'图\s*(\d+)[-–—](\d+)', caption['text'])
-                if match:
-                    chapter = int(match.group(1))
-                    figure_num = int(match.group(2))
-                    numbers.append((chapter, figure_num))
-            
-            # 检查编号是否连续
-            if numbers:
-                for i in range(1, len(numbers)):
-                    if numbers[i][0] == numbers[i-1][0] and numbers[i][1] != numbers[i-1][1] + 1:
-                        page = figure_captions[i]['page']
-                        issues.append(self.create_issue(
-                            position=f"第{page}页 图标题",
-                            description=f"图标题编号可能不连续：{figure_captions[i-1]['text'][:20]} -> {figure_captions[i]['text'][:20]}",
-                            suggestion="请检查图标题编号是否连续"
-                        ))
-                        break
+        # 检查是否按顺序编号
+        numbers = []
+        for caption in figure_captions:
+            match = re.search(r'图\s*(\d+)[-–—](\d+)', caption['text'])
+            if match:
+                chapter = int(match.group(1))
+                figure_num = int(match.group(2))
+                numbers.append((chapter, figure_num))
+        
+        # 检查编号是否连续
+        if numbers:
+            for i in range(1, len(numbers)):
+                if numbers[i][0] == numbers[i-1][0] and numbers[i][1] != numbers[i-1][1] + 1:
+                    page = figure_captions[i]['page']
+                    issues.append(self.create_issue(
+                        position=f"第{page}页 图标题",
+                        description=f"图标题编号可能不连续：{figure_captions[i-1]['text'][:20]} -> {figure_captions[i]['text'][:20]}",
+                        suggestion="请检查图标题编号是否连续"
+                    ))
+                    break
         
         passed = len(issues) == 0
         return self.create_result(passed, issues)
