@@ -1,0 +1,466 @@
+{
+  "version": "2.0.0",
+  "description": "技术文档检查规则配置",
+  "rules": [
+    {
+      "id": "cover_document_number",
+      "name": "文档编号格式检查",
+      "description": "检查文档编号、阶段标识、版本号、密级是否完整，格式是否正确（宋体五号，靠右居中）",
+      "category": "文档封面和签署页",
+      "enabled": true,
+      "checker": "CoverDocumentNumberChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 10.5,
+        "alignment": "right"
+      }
+    },
+    {
+      "id": "cover_document_name",
+      "name": "文档名称格式检查",
+      "description": "检查文档名称是否包含产品型号+产品名称，格式是否正确（宋体一号）",
+      "category": "文档封面和签署页",
+      "enabled": true,
+      "checker": "CoverDocumentNameChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 26
+      }
+    },
+    {
+      "id": "cover_signature",
+      "name": "签署完整性检查",
+      "description": "检查签署是否完整（编制、校对、审核、会签、标审、批准），并是否注明日期（宋体五号）",
+      "category": "文档封面和签署页",
+      "enabled": true,
+      "checker": "CoverSignatureChecker",
+      "params": {
+        "required_roles": ["编制", "校对", "审核", "会签", "标审", "批准"],
+        "font_name": "宋体",
+        "font_size": 10.5
+      }
+    },
+    {
+      "id": "cover_company_name",
+      "name": "公司名称检查",
+      "description": "检查是否包含公司名称（北京国科天迅科技股份有限公司），格式是否正确（宋体四号）",
+      "category": "文档封面和签署页",
+      "enabled": true,
+      "checker": "CoverCompanyNameChecker",
+      "params": {
+        "company_name": "北京国科天迅科技股份有限公司",
+        "font_name": "宋体",
+        "font_size": 14
+      }
+    },
+    {
+      "id": "cover_page_setup",
+      "name": "页面设置检查",
+      "description": "检查幅面是否为A4（297mm×210mm），上下边距25mm，左右边距30mm",
+      "category": "文档封面和签署页",
+      "enabled": true,
+      "checker": "CoverPageSetupChecker",
+      "params": {
+        "paper_size": "A4",
+        "top_margin": 25,
+        "bottom_margin": 25,
+        "left_margin": 30,
+        "right_margin": 30
+      }
+    },
+    {
+      "id": "page_cover_no_number",
+      "name": "封面页码检查",
+      "description": "检查技术文件封面是否无页码标记",
+      "category": "页码",
+      "enabled": true,
+      "checker": "PageCoverNoNumberChecker",
+      "params": {}
+    },
+    {
+      "id": "page_toc_roman",
+      "name": "目次页码格式检查",
+      "description": "检查目次页码是否使用大写罗马数字顺序编排（Ⅰ、Ⅱ……）",
+      "category": "页码",
+      "enabled": true,
+      "checker": "PageTocRomanChecker",
+      "params": {}
+    },
+    {
+      "id": "page_main_arabic",
+      "name": "正文页码格式检查",
+      "description": "检查正文和附录页码是否使用阿拉伯数字，是否放在页脚靠右（宋体小五）",
+      "category": "页码",
+      "enabled": true,
+      "checker": "PageMainArabicChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 9,
+        "position": "footer_right"
+      }
+    },
+    {
+      "id": "toc_required",
+      "name": "目次必要性检查",
+      "description": "检查文件内容超过5页时是否编写目次",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocRequiredChecker",
+      "params": {
+        "min_pages": 5
+      }
+    },
+    {
+      "id": "toc_content",
+      "name": "目次内容完整性检查",
+      "description": "检查目次是否包含文件的编号、标题和页码，目次章节最多到三级",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocContentChecker",
+      "params": {
+        "max_level": 3
+      }
+    },
+    {
+      "id": "toc_title_format",
+      "name": "目次标题格式检查",
+      "description": "检查《目次》字样是否居中，三号黑体",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocTitleFormatChecker",
+      "params": {
+        "font_name": "黑体",
+        "font_size": 16,
+        "alignment": "center"
+      }
+    },
+    {
+      "id": "toc_content_format",
+      "name": "目次内容格式检查",
+      "description": "检查目次内容是否使用小四号宋体，章、条编号是否顶格左对齐",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocContentFormatChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 12,
+        "alignment": "left"
+      }
+    },
+    {
+      "id": "toc_spacing",
+      "name": "目次间距检查",
+      "description": "检查章、条编号与标题之间是否间隔1个空格，标题与页码之间是否用……填充",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocSpacingChecker",
+      "params": {}
+    },
+    {
+      "id": "toc_page_alignment",
+      "name": "目次页码对齐检查",
+      "description": "检查页码是否不加括号，是否右对齐",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocPageAlignmentChecker",
+      "params": {}
+    },
+    {
+      "id": "toc_max_level",
+      "name": "目次层级深度检查",
+      "description": "检查目次章节是否最多到三级",
+      "category": "目次",
+      "enabled": true,
+      "checker": "TocMaxLevelChecker",
+      "params": {
+        "max_level": 3
+      }
+    },
+    {
+      "id": "reference_format",
+      "name": "引用文件格式检查",
+      "description": "检查引用标准、法规性文件及技术文件时，是否按照标准号→顺序号→年代号→标准名称书写",
+      "category": "引用文件",
+      "enabled": true,
+      "checker": "ReferenceFormatChecker",
+      "params": {
+        "pattern": "标准号→顺序号→年代号→标准名称"
+      }
+    },
+    {
+      "id": "reference_order",
+      "name": "引用文件排序检查",
+      "description": "检查引用文件是否按照国家标准、国家军用标准、行业标准、国家法律法规、企标、顾客或总体单位下发的技术文件等顺序排列",
+      "category": "引用文件",
+      "enabled": true,
+      "checker": "ReferenceOrderChecker",
+      "params": {
+        "order": ["国家标准", "国家军用标准", "行业标准", "国家法律法规", "企标", "顾客或总体单位技术文件"]
+      }
+    },
+    {
+      "id": "text_hierarchy",
+      "name": "文件层次检查",
+      "description": "检查文件的层次使用章、节、列项等形式，章节尽量不超过四级",
+      "category": "正文",
+      "enabled": true,
+      "checker": "TextHierarchyChecker",
+      "params": {
+        "max_level": 4
+      }
+    },
+    {
+      "id": "text_terminology",
+      "name": "术语统一性检查",
+      "description": "检查同一产品文件的术语、缩略语、符号、代号是否统一",
+      "category": "正文",
+      "enabled": true,
+      "checker": "TextTerminologyChecker",
+      "params": {}
+    },
+    {
+      "id": "text_font",
+      "name": "正文字体检查",
+      "description": "检查正文文体是否采用小四号宋体",
+      "category": "正文",
+      "enabled": true,
+      "checker": "TextFontChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 12
+      }
+    },
+    {
+      "id": "text_line_spacing",
+      "name": "正文行间距检查",
+      "description": "检查正文文本行间距是否为21磅",
+      "category": "正文",
+      "enabled": true,
+      "checker": "TextLineSpacingChecker",
+      "params": {
+        "line_spacing": 21
+      }
+    },
+    {
+      "id": "text_heading_format",
+      "name": "标题格式检查",
+      "description": "检查正文的章、条编号和标题是否采用四号黑体",
+      "category": "正文",
+      "enabled": true,
+      "checker": "TextHeadingFormatChecker",
+      "params": {
+        "font_name": "黑体",
+        "font_size": 14
+      }
+    },
+    {
+      "id": "figure_caption",
+      "name": "图标题格式检查",
+      "description": "检查图编号与图标题是否位于图下方，居中，五号黑体",
+      "category": "图表",
+      "enabled": true,
+      "checker": "FigureCaptionChecker",
+      "params": {
+        "font_name": "黑体",
+        "font_size": 10.5,
+        "position": "below",
+        "alignment": "center"
+      }
+    },
+    {
+      "id": "table_caption",
+      "name": "表标题格式检查",
+      "description": "检查表编号与表标题是否位于表上方，居中，五号黑体",
+      "category": "图表",
+      "enabled": true,
+      "checker": "TableCaptionChecker",
+      "params": {
+        "font_name": "黑体",
+        "font_size": 10.5,
+        "position": "above",
+        "alignment": "center"
+      }
+    },
+    {
+      "id": "table_content_font",
+      "name": "表格字体检查",
+      "description": "检查表中的文字和数字是否采用小五号宋体",
+      "category": "图表",
+      "enabled": true,
+      "checker": "TableContentFontChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 9
+      }
+    },
+    {
+      "id": "figure_note_font",
+      "name": "图注字体检查",
+      "description": "检查图注、图的脚注是否采用小五号宋体",
+      "category": "图表",
+      "enabled": true,
+      "checker": "FigureNoteFontChecker",
+      "params": {
+        "font_name": "宋体",
+        "font_size": 9
+      }
+    },
+    {
+      "id": "table_unit",
+      "name": "表格单位标注检查",
+      "description": "检查表中各栏参数使用的计量单位是否正确标注",
+      "category": "图表",
+      "enabled": true,
+      "checker": "TableUnitChecker",
+      "params": {}
+    },
+    {
+      "id": "table_continuation",
+      "name": "续表检查",
+      "description": "检查若表转入下页续排时，续表的表头是否省略",
+      "category": "图表",
+      "enabled": true,
+      "checker": "TableContinuationChecker",
+      "params": {}
+    },
+    {
+      "id": "text_note_format",
+      "name": "条文注释格式检查",
+      "description": "检查条文的注是否位于所涉及的章、条的后面并另起一行左起空两个字符的位置书写",
+      "category": "图表",
+      "enabled": true,
+      "checker": "TextNoteFormatChecker",
+      "params": {}
+    },
+    {
+      "id": "formula_components",
+      "name": "公式组成检查",
+      "description": "检查公式是否由表达式、公式编号、参数释义三部分组成",
+      "category": "公式",
+      "enabled": true,
+      "checker": "FormulaComponentsChecker",
+      "params": {}
+    },
+    {
+      "id": "formula_numbering",
+      "name": "公式编号检查",
+      "description": "检查公式编号是否以带圆括号的阿拉伯数字从1开始连续编号，靠右端对齐",
+      "category": "公式",
+      "enabled": true,
+      "checker": "FormulaNumberingChecker",
+      "params": {}
+    },
+    {
+      "id": "formula_alignment",
+      "name": "公式对齐检查",
+      "description": "检查表达式是否居中，表达式和编号间是否用……连接",
+      "category": "公式",
+      "enabled": true,
+      "checker": "FormulaAlignmentChecker",
+      "params": {}
+    },
+    {
+      "id": "formula_reference",
+      "name": "公式引用检查",
+      "description": "检查文件中引用公式时，是否写成公式X的形式",
+      "category": "公式",
+      "enabled": true,
+      "checker": "FormulaReferenceChecker",
+      "params": {}
+    },
+    {
+      "id": "formula_param_explanation",
+      "name": "公式参数释义检查",
+      "description": "检查参数释义是否以《式中：》二字开头，每个参数是否包含参数+破折号+含义+逗号+单位",
+      "category": "公式",
+      "enabled": true,
+      "checker": "FormulaParamExplanationChecker",
+      "params": {}
+    },
+    {
+      "id": "unit_legal",
+      "name": "法定计量单位检查",
+      "description": "检查是否使用法定计量单位，注意字母的大小写（如kg、km、kW、dB、dBm、kHz、s、min、h等）",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "UnitLegalChecker",
+      "params": {}
+    },
+    {
+      "id": "math_symbol",
+      "name": "数学符号检查",
+      "description": "检查是否使用规范的数学符号（使用乘号×而不用圆点•，使用tan而不可用tg）",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "MathSymbolChecker",
+      "params": {}
+    },
+    {
+      "id": "deviation_range",
+      "name": "偏差范围表示检查",
+      "description": "检查偏差范围表示是否正确（如20℃±2℃或(20±2)℃，不可写成20±2℃）",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "DeviationRangeChecker",
+      "params": {}
+    },
+    {
+      "id": "significant_digits",
+      "name": "有效位数检查",
+      "description": "检查对于有精确度要求的数值，是否写出全部有效位数",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "SignificantDigitsChecker",
+      "params": {}
+    },
+    {
+      "id": "unit_series",
+      "name": "同单位数值系列检查",
+      "description": "检查文件中列有同一计量单位的一系列数值时，是否在数值全部写完之后再写出计量单位符号",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "UnitSeriesChecker",
+      "params": {}
+    },
+    {
+      "id": "scientific_notation",
+      "name": "科学计数法检查",
+      "description": "检查整数的位数较多时，是否采用10n作为倍数的写法",
+      "category": "量、单位及其符号",
+      "enabled": true,
+      "checker": "ScientificNotationChecker",
+      "params": {}
+    },
+    {
+      "id": "appendix_new_page",
+      "name": "附录分页检查",
+      "description": "检查每个附录是否另起一页书写，《附录》是否居中，并单独占一行，五号黑体",
+      "category": "附录",
+      "enabled": true,
+      "checker": "AppendixNewPageChecker",
+      "params": {
+        "font_name": "黑体",
+        "font_size": 10.5,
+        "alignment": "center"
+      }
+    },
+    {
+      "id": "appendix_numbering",
+      "name": "附录编号检查",
+      "description": "检查《附录》二字后面是否用A、B、C……顺序编号",
+      "category": "附录",
+      "enabled": true,
+      "checker": "AppendixNumberingChecker",
+      "params": {}
+    },
+    {
+      "id": "appendix_title",
+      "name": "附录标题检查",
+      "description": "检查附录是否设标题，标题是否写在《附录》及编号下一行居中位置",
+      "category": "附录",
+      "enabled": true,
+      "checker": "AppendixTitleChecker",
+      "params": {}
+    }
+  ]
+}
